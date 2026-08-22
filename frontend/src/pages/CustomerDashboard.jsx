@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { orderApi } from '../api/endpoints';
@@ -116,16 +115,8 @@ export default function CustomerDashboard() {
       {tab === 'new' && (
         <div className="bg-white border rounded-xl p-6 space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
-            <AddressFields
-              label="Pickup Address"
-              address={form.pickupAddress}
-              onChange={(field, value) => updateField('pickupAddress', field, value)}
-            />
-            <AddressFields
-              label="Drop Address"
-              address={form.dropAddress}
-              onChange={(field, value) => updateField('dropAddress', field, value)}
-            />
+            <AddressFields section="pickupAddress" label="Pickup Address" form={form} updateField={updateField} />
+            <AddressFields section="dropAddress" label="Drop Address" form={form} updateField={updateField} />
           </div>
 
           <div>
@@ -276,7 +267,7 @@ export default function CustomerDashboard() {
   );
 }
 
-function AddressFields({ address, label, onChange }) {
+function AddressFields({ section, label, form, updateField }) {
   return (
     <div>
       <h3 className="font-semibold text-sm mb-2">{label}</h3>
@@ -284,26 +275,26 @@ function AddressFields({ address, label, onChange }) {
         <input
           placeholder="Address line"
           className="border rounded-md px-3 py-2 text-sm col-span-2"
-          value={address.line1}
-          onChange={(e) => onChange('line1', e.target.value)}
+          value={form[section].line1}
+          onChange={(e) => updateField(section, 'line1', e.target.value)}
         />
         <input
           placeholder="City"
           className="border rounded-md px-3 py-2 text-sm"
-          value={address.city}
-          onChange={(e) => onChange('city', e.target.value)}
+          value={form[section].city}
+          onChange={(e) => updateField(section, 'city', e.target.value)}
         />
         <input
           placeholder="State"
           className="border rounded-md px-3 py-2 text-sm"
-          value={address.state}
-          onChange={(e) => onChange('state', e.target.value)}
+          value={form[section].state}
+          onChange={(e) => updateField(section, 'state', e.target.value)}
         />
         <input
           placeholder="Pincode"
           className="border rounded-md px-3 py-2 text-sm col-span-2"
-          value={address.pincode}
-          onChange={(e) => onChange('pincode', e.target.value)}
+          value={form[section].pincode}
+          onChange={(e) => updateField(section, 'pincode', e.target.value)}
         />
       </div>
     </div>

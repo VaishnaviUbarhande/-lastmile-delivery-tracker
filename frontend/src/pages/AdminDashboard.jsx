@@ -49,10 +49,12 @@ function OrdersPanel() {
   const [orders, setOrders] = useState([]);
   const [zones, setZones] = useState([]);
   const [agents, setAgents] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [filters, setFilters] = useState({ status: '', zone: '', agent: '' });
   const [selected, setSelected] = useState(null);
   const [overrideStatus, setOverrideStatus] = useState('');
   const [overrideNote, setOverrideNote] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const load = async () => {
     const params = {};
@@ -64,6 +66,7 @@ function OrdersPanel() {
   useEffect(() => {
     zoneApi.list().then((r) => setZones(r.data.data));
     userApi.list('agent').then((r) => setAgents(r.data.data));
+    userApi.list('customer').then((r) => setCustomers(r.data.data));
   }, []);
 
   useEffect(() => {
@@ -114,7 +117,28 @@ function OrdersPanel() {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setShowCreateForm((v) => !v)}
+          className="text-sm bg-brand-600 text-white px-4 py-2 rounded-md font-medium"
+        >
+          {showCreateForm ? 'Close' : '+ New Order for Customer'}
+        </button>
+      </div>
+
+      {showCreateForm && (
+        <CreateOrderForCustomer
+          customers={customers}
+          onCreated={() => {
+            setShowCreateForm(false);
+            load();
+          }}
+          onCancel={() => setShowCreateForm(false)}
+        />
+      )}
+
+      <div className="grid md:grid-cols-2 gap-6">
       <div>
         <div className="flex gap-2 mb-4">
           <select
@@ -264,6 +288,237 @@ function OrdersPanel() {
             </div>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------- Create Order For Customer (admin, on behalf of) ----------------
+const EMPTY_ADMIN_ORDER = {
+  customerId: '',
+  pickupAddress: { line1: '', city: '', state: '', pincode: '' },
+  dropAddress: { line1: '', city: '', state: '', pincode: '' },
+  dimensions: { lengthCm: '', breadthCm: '', heightCm: '', actualWeightKg: '' },
+  orderType: 'B2C',
+  paymentType: 'Prepaid',
+  codAmount: '',
+};
+
+function CreateOrderForCustomer({ customers, onCreated, onCancel }) {
+  const [form, setForm] = useState(EMPTY_ADMIN_ORDER);
+  const [preview, setPreview] = useState(null);
+  const [previewing, setPreviewing] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  const updateField = (section, field, value) => {
+    setForm((f) => ({ ...f, [section]: { ...f[section], [field]: value } }));
+    setPreview(null);
+  };
+
+  const buildDimensions = () => ({
+    lengthCm: Number(form.dimensions.lengthCm),
+    breadthCm: Number(form.dimensions.breadthCm),
+    heightCm: Number(form.dimensions.heightCm),
+    actualWeightKg: Number(form.dimensions.actualWeightKg),
+  });
+
+  const handlePreview = async () => {
+    setPreviewing(true);
+    try {
+      const res = await orderApi.preview({
+        pickupAddress: form.pickupAddress,
+        dropAddress: form.dropAddress,
+        dimensions: buildDimensions(),
+        orderType: form.orderType,
+        paymentType: form.paymentType,
+      });
+      setPreview(res.data.data);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not calculate price');
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!form.customerId) {
+      toast.error('Select a customer first');
+      return;
+    }
+    setCreating(true);
+    try {
+      await orderApi.create({
+        customerId: form.customerId,
+        pickupAddress: form.pickupAddress,
+        dropAddress: form.dropAddress,
+        dimensions: buildDimensions(),
+        orderType: form.orderType,
+        paymentType: form.paymentType,
+        codAmount: form.paymentType === 'COD' ? Number(form.codAmount) : undefined,
+      });
+      toast.success('Order created on behalf of customer');
+      onCreated();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Order creation failed');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="bg-white border rounded-xl p-6 space-y-6 mb-6">
+      <div className="flex justify-between items-center">
+        <h3 className="font-bold">Create Order on Behalf of Customer</h3>
+        <button onClick={onCancel} className="text-sm text-gray-500 hover:text-gray-700">
+          Cancel
+        </button>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-sm mb-2">Customer</h4>
+        <select
+          className="border rounded-md px-3 py-2 text-sm w-full"
+          value={form.customerId}
+          onChange={(e) => setForm((f) => ({ ...f, customerId: e.target.value }))}
+        >
+          <option value="">Select customer</option>
+          {customers.map((c) => (
+            <option key={c._id} value={c._id}>
+              {c.name} ({c.email})
+            </option>
+          ))}
+        </select>
+        {customers.length === 0 && (
+          <p className="text-xs text-amber-600 mt-1">
+            No customers found yet — a customer must register first before you can place an order
+            on their behalf.
+          </p>
+        )}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <AdminAddressFields section="pickupAddress" label="Pickup Address" form={form} updateField={updateField} />
+        <AdminAddressFields section="dropAddress" label="Drop Address" form={form} updateField={updateField} />
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-sm mb-2">Package Details</h4>
+        <div className="grid grid-cols-4 gap-2">
+          {['lengthCm', 'breadthCm', 'heightCm', 'actualWeightKg'].map((f) => (
+            <input
+              key={f}
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder={f}
+              className="border rounded-md px-3 py-2 text-sm"
+              value={form.dimensions[f]}
+              onChange={(e) => updateField('dimensions', f, e.target.value)}
+            />
+          ))}
+        </div>
+        <p className="text-xs text-gray-400 mt-1">L, B, H in cm · Weight in kg</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div>
+          <h4 className="font-semibold text-sm mb-2">Order Type</h4>
+          <select
+            className="border rounded-md px-3 py-2 text-sm w-full"
+            value={form.orderType}
+            onChange={(e) => {
+              setForm((f) => ({ ...f, orderType: e.target.value }));
+              setPreview(null);
+            }}
+          >
+            <option value="B2C">B2C</option>
+            <option value="B2B">B2B</option>
+          </select>
+        </div>
+        <div>
+          <h4 className="font-semibold text-sm mb-2">Payment Type</h4>
+          <select
+            className="border rounded-md px-3 py-2 text-sm w-full"
+            value={form.paymentType}
+            onChange={(e) => {
+              setForm((f) => ({ ...f, paymentType: e.target.value }));
+              setPreview(null);
+            }}
+          >
+            <option value="Prepaid">Prepaid</option>
+            <option value="COD">COD</option>
+          </select>
+        </div>
+      </div>
+
+      {form.paymentType === 'COD' && (
+        <input
+          type="number"
+          placeholder="Amount to collect (COD)"
+          className="border rounded-md px-3 py-2 text-sm w-full"
+          value={form.codAmount}
+          onChange={(e) => setForm((f) => ({ ...f, codAmount: e.target.value }))}
+        />
+      )}
+
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handlePreview}
+          disabled={previewing}
+          className="border border-brand-600 text-brand-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-50"
+        >
+          {previewing ? 'Calculating...' : 'Preview Price'}
+        </button>
+        {preview && (
+          <div className="text-sm">
+            <span className="text-gray-500 mr-2">
+              {preview.isIntraZone ? 'Intra-zone' : 'Inter-zone'} · billable {preview.billableWeightKg}kg
+            </span>
+            <span className="font-bold text-lg text-brand-700">₹{preview.charge.totalCharge}</span>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={handleCreate}
+        disabled={!preview || creating || !form.customerId}
+        className="w-full bg-brand-600 text-white py-2.5 rounded-md font-medium hover:bg-brand-700 disabled:opacity-50"
+      >
+        {creating ? 'Placing order...' : 'Confirm & Place Order'}
+      </button>
+    </div>
+  );
+}
+
+function AdminAddressFields({ section, label, form, updateField }) {
+  return (
+    <div>
+      <h4 className="font-semibold text-sm mb-2">{label}</h4>
+      <div className="grid grid-cols-2 gap-2 mb-2">
+        <input
+          placeholder="Address line"
+          className="border rounded-md px-3 py-2 text-sm col-span-2"
+          value={form[section].line1}
+          onChange={(e) => updateField(section, 'line1', e.target.value)}
+        />
+        <input
+          placeholder="City"
+          className="border rounded-md px-3 py-2 text-sm"
+          value={form[section].city}
+          onChange={(e) => updateField(section, 'city', e.target.value)}
+        />
+        <input
+          placeholder="State"
+          className="border rounded-md px-3 py-2 text-sm"
+          value={form[section].state}
+          onChange={(e) => updateField(section, 'state', e.target.value)}
+        />
+        <input
+          placeholder="Pincode"
+          className="border rounded-md px-3 py-2 text-sm col-span-2"
+          value={form[section].pincode}
+          onChange={(e) => updateField(section, 'pincode', e.target.value)}
+        />
       </div>
     </div>
   );

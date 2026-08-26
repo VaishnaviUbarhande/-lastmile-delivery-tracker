@@ -16,29 +16,45 @@ A full-stack logistics platform that helps **customers create and track deliveri
 ![JWT](https://img.shields.io/badge/Auth-JWT-black?logo=jsonwebtokens)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-**[🌐 Live Demo](#-live-demo) · [🚀 Key Features](#-key-features) · [🏗️ Architecture](#️-system-architecture) · [🧮 Smart Pricing](#-smart-pricing-system) · [▶️ Run Locally](#️-run-locally) · [🔐 Demo Accounts](#-demo-accounts)**
+**[🌐 Live Demo](#-live-demo) · [🚀 Key Features](#-key-features) · [🏗️ Architecture](#-system-architecture) · [🧮 Smart Pricing](#-smart-pricing-system) · [▶️ Run Locally](#-run-locally) · [🔐 Demo Accounts](#-demo-accounts)**
 
 </div>
 
 ---
 
+## 🌐 Live Demo
+
+<div align="center">
+
+### **[🚀 Open the App →](https://lastmile-delivery-tracker-kyyq-ks6zhgjn2-vaishnavi-0c1c.vercel.app/)**
+
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://lastmile-delivery-tracker-kyyq-ks6zhgjn2-vaishnavi-0c1c.vercel.app/)
+[![GitHub](https://img.shields.io/badge/Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VaishnaviUbarhande/-lastmile-delivery-tracker)
+
+</div>
+
+The frontend is connected to GitHub for continuous deployment on Vercel — every push to `main` deploys automatically. Log in instantly with any account from [Demo Accounts](#-demo-accounts) below; no registration needed.
+
+---
+
 ## 📑 Table of Contents
 
-1. [About the Project](#-about-the-project)
-2. [Problem Statement](#-problem-statement)
-3. [Key Features](#-key-features)
-4. [Smart Pricing System](#-smart-pricing-system)
-5. [Smart Delivery Agent Assignment](#-smart-delivery-agent-assignment)
-6. [Delivery Lifecycle](#-delivery-lifecycle)
-7. [System Architecture](#️-system-architecture)
-8. [Tech Stack](#️-tech-stack)
-9. [Screenshots](#-screenshots)
-10. [Demo Accounts](#-demo-accounts)
-11. [Project Structure](#-project-structure)
-12. [Run Locally](#️-run-locally)
-13. [Testing](#-testing)
-14. [Security](#-security)
-15. [Documentation](#-documentation)
+1. [Live Demo](#-live-demo)
+2. [About the Project](#-about-the-project)
+3. [Problem Statement](#-problem-statement)
+4. [Key Features](#-key-features)
+5. [Smart Pricing System](#-smart-pricing-system)
+6. [Smart Delivery Agent Assignment](#-smart-delivery-agent-assignment)
+7. [Delivery Lifecycle](#-delivery-lifecycle)
+8. [System Architecture](#️-system-architecture)
+9. [Tech Stack](#️-tech-stack)
+10. [Screenshots](#-screenshots)
+11. [Demo Accounts](#-demo-accounts)
+12. [Project Structure](#-project-structure)
+13. [Run Locally](#️-run-locally)
+14. [Testing](#-testing)
+15. [Security](#-security)
+16. [Documentation](#-documentation)
 
 ---
 

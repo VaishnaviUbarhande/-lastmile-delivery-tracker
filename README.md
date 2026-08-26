@@ -1,72 +1,40 @@
+<div align="center">
+
 # 📦 Last-Mile Delivery Tracker
 
-A full-stack **MERN-based delivery management platform** for managing customers, delivery agents, orders, pricing, tracking, assignments, and delivery notifications.
+A full-stack **MERN** delivery management platform — customers and admins create orders with
+auto-calculated shipping charges, agents are assigned intelligently (manual or
+nearest-available auto-assignment), and customers get notified by email/SMS at every status
+change.
 
-The system supports **Customer, Delivery Agent, and Admin** roles with JWT authentication and role-based access control.
+[![🚀 Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Open_App-brightgreen?style=for-the-badge)](https://lastmile-delivery-tracker-kyyq-ks6zhgjn2-vaishnavi-0c1c.vercel.app/)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://lastmile-delivery-tracker-kyyq-ks6zhgjn2-vaishnavi-0c1c.vercel.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VaishnaviUbarhande/-lastmile-delivery-tracker)
+
+<br/>
+
+![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/react-18.3-61DAFB?logo=react&logoColor=black)
+![MongoDB](https://img.shields.io/badge/mongodb-8.5-47A248?logo=mongodb&logoColor=white)
+![Express](https://img.shields.io/badge/express-4.19-000000?logo=express&logoColor=white)
+![Tailwind](https://img.shields.io/badge/tailwind-3.4-06B6D4?logo=tailwindcss&logoColor=white)
+![JWT](https://img.shields.io/badge/auth-JWT-000000?logo=jsonwebtokens&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Status](https://img.shields.io/badge/status-active-success)
+
+**[🚀 Live App](#-live-app) · [✨ Features](#-features) · [🏗 Architecture](#-architecture) · [🗄 Database Schema](#-database-schema) · [⚙️ Environment Variables](#️-environment-variables) · [🚀 Local Setup](#-local-setup)**
+
+</div>
 
 ---
 
-## 🔗 Live Demo
+## 🚀 Live App
 
-### 🚀 App Demo
+### 🌐 Deployed Application
 
-**Live Application:**
-https://lastmile-delivery-tracker-frontend-g39dcb042-vaishnavi-0c1c.vercel.app/login
+**[👉 Open Last-Mile Delivery Tracker](https://lastmile-delivery-tracker-kyyq-ks6zhgjn2-vaishnavi-0c1c.vercel.app/)**
 
 The application is deployed on **Vercel**.
-
----
-
-## ✨ Key Features
-
-### 👤 Customer
-
-* Register and login securely using JWT authentication
-* Create delivery orders
-* Enter pickup and delivery addresses
-* Get shipping price preview before confirming an order
-* Track order status using a visual timeline
-* View previous orders
-* View complete price breakdown
-* Request rescheduling after failed delivery
-* Receive delivery status notifications
-
-### 🚴 Delivery Agent
-
-* Login using an agent account
-* View assigned orders
-* Update delivery status
-* Mark deliveries as failed with a reason
-* Update availability
-* Update current location
-* Participate in automatic order assignment
-
-### 🛡️ Admin
-
-* View and manage all orders
-* Manually assign or reassign delivery agents
-* Manage delivery zones
-* Manage B2B/B2C rate cards
-* Manage customers and delivery agents
-* Monitor agent availability
-* Monitor order status and tracking history
-* Override assignments when required
-
-### ⚙️ Platform
-
-* JWT authentication
-* Role-based authorization
-* Dynamic shipping price calculation
-* Volumetric weight calculation
-* Intra-zone and inter-zone pricing
-* COD surcharge calculation
-* Nearest-agent auto assignment
-* Agent load balancing
-* Failed delivery and rescheduling
-* Email and SMS notification support
-* Append-only order tracking history
-* REST API
-* Jest and Supertest testing
 
 ---
 
@@ -98,305 +66,108 @@ The application is deployed on **Vercel**.
 
 ---
 
-## 🏗️ System Architecture
+## ✨ Features
 
-The application follows a three-layer full-stack architecture:
+### 👤 Customer
 
-```text
-Customer / Delivery Agent / Admin
-              |
-              v
-       React Frontend
-              |
-              v
-      Node.js + Express
-              |
-              v
-          MongoDB
-              |
-              v
-    Email + SMS Notifications
-```
+- Register/login with JWT-based authentication
+- Create an order with live shipping-price preview
+- Track order status through a visual timeline
+- View previous orders
+- View detailed price breakdown
+- Request a reschedule after a failed delivery attempt
+- Receive email/SMS notifications for order status changes
 
----
+### 🚴 Delivery Agent
 
-## 🧮 Rate Calculation
+- View orders assigned to them
+- Update order status
+- Follow a validated delivery status workflow
+- Mark delivery as failed with a reason
+- Toggle availability
+- Update current location
+- Automatically receive orders through the assignment system
 
-The application dynamically calculates shipping charges using:
+### 🛡️ Admin
 
-* Actual package weight
-* Volumetric weight
-* Billable weight
-* Pickup and delivery zones
-* B2B/B2C rate cards
-* Intra-zone and inter-zone pricing
-* COD surcharge
+- View and manage all orders
+- Manually assign/reassign delivery agents
+- Manage delivery zones
+- Manage B2B and B2C rate cards
+- Manage customers and delivery agents
+- Activate/deactivate users
+- Monitor automatic agent assignment
 
-### Volumetric Weight
+### ⚙️ Platform-wide
 
-```text
-Volumetric Weight = (Length × Width × Height) / 5000
-```
-
-### Billable Weight
-
-```text
-Billable Weight = MAX(Actual Weight, Volumetric Weight)
-```
-
-The final shipping price is calculated on the backend before an order is confirmed.
-
----
-
-## 🤖 Smart Agent Assignment
-
-The platform supports automatic delivery-agent assignment.
-
-The system:
-
-1. Finds available delivery agents.
-2. Checks agents in the pickup zone.
-3. Calculates distance when location data is available.
-4. Selects the nearest suitable agent.
-5. Uses agent workload for load balancing.
-6. Widens the search when no suitable agent is available in the pickup zone.
-
-Admins can also manually assign or reassign agents.
+- 🧮 Dynamic shipping-price calculation
+- 📦 Volumetric and billable weight calculation
+- 🤖 Smart automatic delivery-agent assignment
+- 📍 Zone-based delivery management
+- 🔁 Failed-delivery and reschedule workflow
+- 🧾 Append-only tracking history
+- 📧 Email notifications using Nodemailer
+- 📱 SMS notifications using Twilio
+- 🔒 JWT authentication
+- 🛡️ Role-based access control
+- ✅ Jest and Supertest testing
+- 🗄️ MongoDB database
 
 ---
 
-## 🔁 Failed Delivery & Rescheduling
+## 🏗 Architecture
 
-The platform supports a complete failed-delivery workflow:
+```mermaid
+flowchart LR
 
-```text
-Delivery Attempt
-       |
-       v
-     Failed
-       |
-       v
- Failure Reason
-       |
-       v
- Customer Notification
-       |
-       v
-   Reschedule
-       |
-       v
-Auto Assignment
-       |
-       v
- New Delivery Attempt
-```
+    CUSTOMER["👤 Customer"]
+    AGENT["🚴 Delivery Agent"]
+    ADMIN["🛡️ Admin"]
 
-Customers and admins can request rescheduling after a failed delivery.
+    FRONTEND["🌐 React + Vite Frontend<br/>Vercel"]
 
----
+    API["⚙️ Node.js + Express API"]
 
-## 🔐 Authentication & Authorization
+    AUTH["🔐 JWT Authentication<br/>Role-Based Authorization"]
 
-The application uses:
+    ORDERS["📦 Order Management"]
 
-* JWT authentication
-* Role-based authorization
-* Protected routes
-* Password hashing
-* Customer access control
-* Delivery Agent access control
-* Admin access control
+    PRICING["🧮 Pricing Engine"]
 
-The three supported roles are:
+    ZONES["📍 Zone Detection"]
 
-```text
-Customer
-Delivery Agent
-Admin
-```
+    ASSIGN["🤖 Auto Assignment"]
 
----
+    NOTIFY["🔔 Notification Service"]
 
-## 🧰 Tech Stack
+    DB[("🗄️ MongoDB Atlas")]
 
-| Layer             | Technology        |
-| ----------------- | ----------------- |
-| Frontend          | React, Vite       |
-| Styling           | Tailwind CSS      |
-| Backend           | Node.js, Express  |
-| Database          | MongoDB, Mongoose |
-| Authentication    | JWT               |
-| Password Security | bcryptjs          |
-| HTTP Client       | Axios             |
-| Email             | Nodemailer        |
-| SMS               | Twilio            |
-| Testing           | Jest, Supertest   |
-| Deployment        | Vercel            |
+    EMAIL["📧 Email<br/>Nodemailer / SMTP"]
 
----
+    SMS["📱 SMS<br/>Twilio"]
 
-## 📁 Project Structure
+    CUSTOMER --> FRONTEND
+    AGENT --> FRONTEND
+    ADMIN --> FRONTEND
 
-```text
-lastmile-delivery-tracker/
-│
-├── backend/
-│   ├── config/
-│   ├── models/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middleware/
-│   ├── utils/
-│   ├── seed/
-│   ├── tests/
-│   ├── server.js
-│   ├── package.json
-│   └── .env.example
-│
-├── frontend/
-│   ├── src/
-│   │   ├── api/
-│   │   ├── context/
-│   │   ├── components/
-│   │   └── pages/
-│   ├── package.json
-│   └── .env.example
-│
-├── screenshots/
-│   ├── 01-login-page.png
-│   ├── 02-customer-new-order.png
-│   ├── 03-customer-my-orders.png
-│   ├── 04-customer-my-orders-multiple.png
-│   ├── 05-delivery-agent-dashboard.png
-│   └── 06-admin-order-management.png
-│
-├── SYSTEM_DESIGN.md
-├── API_DOCUMENTATION.md
-└── README.md
-```
+    FRONTEND --> API
 
----
+    API --> AUTH
 
-## 🚀 Local Setup
+    AUTH --> ORDERS
+    AUTH --> PRICING
+    AUTH --> ZONES
+    AUTH --> ASSIGN
 
-### Prerequisites
+    ORDERS --> PRICING
+    ORDERS --> ZONES
+    ORDERS --> ASSIGN
+    ORDERS --> NOTIFY
 
-* Node.js 18+
-* MongoDB or MongoDB Atlas
-* Git
-* VS Code
+    ORDERS --> DB
+    PRICING --> DB
+    ZONES --> DB
+    ASSIGN --> DB
 
-### Backend
-
-```bash
-cd backend
-npm install
-```
-
-Create the environment file:
-
-```bash
-copy .env.example .env
-```
-
-Configure your MongoDB connection and JWT secret in `.env`.
-
-Start the backend:
-
-```bash
-npm run dev
-```
-
-### Frontend
-
-Open another terminal:
-
-```bash
-cd frontend
-npm install
-```
-
-Create the environment file:
-
-```bash
-copy .env.example .env
-```
-
-Configure the backend API URL in the frontend environment file.
-
-Start the frontend:
-
-```bash
-npm run dev
-```
-
-The application will normally be available at:
-
-```text
-http://localhost:5173
-```
-
----
-
-## 🧪 Testing
-
-Backend tests can be executed using:
-
-```bash
-cd backend
-npm test
-```
-
-The test suite includes testing for:
-
-* Rate calculation
-* Volumetric weight
-* Billable weight
-* COD surcharge
-* Order lifecycle
-* Agent assignment
-* Status transitions
-* Failed delivery
-* Rescheduling
-
----
-
-## 📡 API Documentation
-
-Detailed API documentation is available in:
-
-[`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md)
-
----
-
-## 📝 Notes
-
-* Shipping prices are calculated dynamically.
-* Rate cards are database-driven.
-* Historical order prices remain unchanged after rate-card updates.
-* Tracking history is maintained as an append-only record.
-* Agent assignment supports automatic and manual assignment.
-* Failed deliveries support rescheduling and reassignment.
-* Email and SMS notifications are supported.
-* Sensitive environment variables should never be committed to GitHub.
-
----
-
-## 🚀 App Demo
-
-**Try the application here:**
-
-### 👉 https://lastmile-delivery-tracker-frontend-g39dcb042-vaishnavi-0c1c.vercel.app/login
-
----
-
-<div align="center">
-
-### 📦 Last-Mile Delivery Tracker
-
-Built with ❤️ using the **MERN Stack**
-
-**React • Node.js • Express • MongoDB**
-
-</div>
- 
+    NOTIFY --> EMAIL
+    NOTIFY --> SMS
